@@ -60,8 +60,7 @@ print(largest, largest_point)# Part 1
 count_200 = 0
 quadrant_200_in = None
 before_quadrant = 0
-for x in [1, 3, 2, 0]:
-    print(quadrants[x])
+for x in [2, 0, 1, 3]:
     for _ in largest_quadrants[x]:
         count_200 += 1
         if count_200 == 200:
@@ -73,7 +72,7 @@ slopes = []
 for point in largest_quadrants[quadrant_200_in]:
     slopes.append(float(point[0]) / float(point[1]))
     slope[slopes[-1]] = point
-slopes.sort()
+slopes.sort(reverse=True if quadrant_200_in in [3, 0] else False)
 number_200 = 0
 for sl in slopes:
     before_quadrant += 1
@@ -81,19 +80,15 @@ for sl in slopes:
         number_200 = slope[sl]
         break
 possible_points = []
+distances = []
 for ast_loc, _ in asteroid_map.items():
     if largest_point != ast_loc:
         distance = (largest_point[0] - ast_loc[0], largest_point[1] - ast_loc[1])
         lcm = gcd(abs(distance[0]), abs(distance[1]))
         distance_least = (distance[0] // lcm, distance[1] // lcm)
+
         if distance_least == number_200:
             possible_points.append(ast_loc)
-print(ast_loc) # Part2 Choose the one closest to largest_point if there are more than 1
-
-
-
-
-
-
-
-
+            distances.append(distance)
+print(possible_points) # Part2 Choose the one with the smallest original distance
+print(distances)
