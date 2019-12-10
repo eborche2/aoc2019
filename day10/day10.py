@@ -2,12 +2,12 @@ from fractions import gcd
 
 
 def determine_quadrant(base, asteroid):
-    right = True
-    up = True
-    if asteroid[0] < base[0]:
-        right = False
-    if asteroid[1] < base[1]:
-        up = False
+    right = False
+    up = False
+    if asteroid[0] >= base[0]:
+        right = True
+    if asteroid[1] >= base[1]:
+        up = True
     if right and up:
         return 0
     if up:
@@ -60,7 +60,7 @@ print(largest, largest_point)# Part 1
 count_200 = 0
 quadrant_200_in = None
 before_quadrant = 0
-for x in [1, 0, 2, 3]:
+for x in [1, 3, 2, 0]:
     print(quadrants[x])
     for _ in largest_quadrants[x]:
         count_200 += 1
