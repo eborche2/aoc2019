@@ -1,5 +1,5 @@
 from itertools import combinations
-
+import copy
 
 def adjust_velocity(moon_pair):
     first_moon = moon_pair[0]
@@ -23,12 +23,35 @@ def adjust_position(_moon):
     return _moon
 
 
-def check_duplicate(_moons):
-    for m in _moons:
-        if len(m['p']) == len(set(m['p'])):
+def _adjust_velocity(_new_pos, _new_vel, pos):
+    compared = [0]
+    for x, first in enumerate(_new_pos):
+        compared.append(x)
+        for z, second in enumerate(_new_pos):
+            if z in compared:
+                continue
+            if first[pos] > second[pos]:
+                _new_vel[x][pos] -= 1
+                _new_vel[z][pos] += 1
+            elif first[pos] < second[pos]:
+                _new_vel[x][pos] += 1
+                _new_vel[z][pos] -= 1
+    return _new_vel
+
+
+def  _adjust_position(_new_pos, pos):
+    for i, moon in enumerate(_new_pos):
+        _new_pos[i][pos] = moon[pos] + new_vel[i][pos]
+    return _new_pos
+
+
+def check(position):
+    for i in range(4):
+        if pos[i][position] != new_pos[i][position]:
+            return False
+        if vel[i][position] != new_vel[i][position]:
             return False
     return True
-
 
 Io = {
     'p': [[-4, 3, 15]],
@@ -48,7 +71,7 @@ Callisto = {
 }
 
 moons = [Io, Europa, Ganymede, Callisto]
-original = moons[:]
+original = copy.deepcopy(moons)
 for x in range(1000):
     for moon in moons:
         moon['p'].append(list(moon['p'][-1][:]))
@@ -59,28 +82,36 @@ for x in range(1000):
         moons[i] = adjust_position(moon)
 total_energy = 0
 for moon in moons:
-    print(moon['v'][-1])
-    print(moon['p'][-1])
     vel = [abs(x) for x in moon['v'][-1]]
     pos = [abs(x) for x in moon['p'][-1]]
     total_energy += sum(vel) * sum(pos)
 print(total_energy) #part 1
 
-found_duplicate = False
-moons = original
-steps = 0
-for moon in moons:
-    moon['p'][0] = tuple(moon['p'][0])
-    moon['v'][0] = tuple(moon['v'][0])
-while not found_duplicate:
-    steps += 1
-    for moon in moons:
-        moon['p'].append(list(moon['p'][-1][:]))
-        moon['v'].append(list(moon['v'][-1][:]))
-    for pair in combinations(moons, 2):
-        moons[moons.index(pair[0])], moons[moons.index(pair[1])] = adjust_velocity(pair)
-    for i, moon in enumerate(moons):
-        moons[i] = adjust_position(moon)
-    found_duplicate = check_duplicate(moons)
-    if moons[0]['p']
-print(steps) # part 2
+pos = [[-4, 3, 15], [-11, -10, 13], [2, 2, 18], [7, -1, 0]]
+vel = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+path = [0, 0, 0]
+new_pos = copy.deepcopy(pos)
+new_vel = copy.deepcopy(vel)
+
+# borrowed from https://www.w3resource.com/python-exercises/challenges/1/python-challenges-1-exercise-37.php
+def gcd(x, y):
+    return y and gcd(y, x % y) or x
+
+
+def lcm(x, y):
+    return x * y / gcd(x, y)
+
+
+for position in range(3):
+    found = False
+    print("here")
+    while not found:
+        path[position] += 1
+        new_vel = _adjust_velocity(new_pos, new_vel, position)
+        new_pos = _adjust_position(new_pos, position)
+        found = check(position)
+n = path[0]
+for i in path:
+    n = lcm(n, i)
+print(n) # Part 2 :(
+
