@@ -116,6 +116,8 @@ def processOpCode(content, position, _base, _first, _second, _x, _y, _pin):
         elif operation == 4:
             new_position = position + 2
             if _second:
+                if (_x, _y) == (-1, 0):
+                    print (getValue(content, position + 1, first, _base))
                 _pin = content[getValue(content, position + 1, first, _base)]
                 _first = False
             elif _first:
